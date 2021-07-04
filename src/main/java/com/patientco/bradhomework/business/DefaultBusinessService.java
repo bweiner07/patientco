@@ -1,25 +1,28 @@
 package com.patientco.bradhomework.business;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.util.*;
 
 @Slf4j
 @Service
-public class DefaultBuisnessService implements BuisnessService{
+@RequiredArgsConstructor
+public class DefaultBusinessService implements BusinessService {
 
-    //TODO: Handle Commas inside quotes
-    //TODO: Handle quotes ""word"" -> ""word"" !-> "\"word\""
+    //Todo, handle if entry is missing...need to insert a blank or something
+    //Todo: proper exception handling
+    //Todo: tests..shame no TDD
+    private final Splitinator splitinator;
+
     @Override
     public List<Map<String, Object>> read(String delimiter) {
         List<Map<String, Object>> values = new ArrayList<>();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(new File("src/main/resources/input.txt")));
+            BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/input.txt"));
             String headers = reader.readLine();
             List<String> titles = Arrays.asList(headers.split(delimiter));
 
@@ -27,7 +30,7 @@ public class DefaultBuisnessService implements BuisnessService{
                 String line;
                 while((line = reader.readLine()) != null){
 
-                    List<String> entries = Arrays.asList(line.split(delimiter));
+                    List<String> entries = splitinator.split(line, delimiter.charAt(0));
                     values.add(mapEntriesToTitles(titles, entries));
                 }
             }
@@ -45,12 +48,9 @@ public class DefaultBuisnessService implements BuisnessService{
         for(int i = 0; i < titles.size(); i++){
             String entry = entries.get(i);
             if (isNumber(entry)) {
-                values.put(titles.get(i), Integer.parseInt(entry));
+                values.put(titles.get(i).trim(), Integer.parseInt(entry));
             } else {
-                if(entry.contains("\"")){
-                    entry
-                }
-                values.put(titles.get(i), entry);
+                values.put(titles.get(i).trim(), entry);
             }
 
         }

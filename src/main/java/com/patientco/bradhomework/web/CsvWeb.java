@@ -1,6 +1,6 @@
 package com.patientco.bradhomework.web;
 
-import com.patientco.bradhomework.business.BuisnessService;
+import com.patientco.bradhomework.business.BusinessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +15,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CsvWeb {
 
-    private final BuisnessService service;
+    private final BusinessService service;
 
     @GetMapping("{delimiter}")
     public List<Map<String, Object>> read(@PathVariable String delimiter){
