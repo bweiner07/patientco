@@ -5,5 +5,5 @@ import java.util.Map;
 
 public interface BusinessService {
 
-    List<Map<String, Object>> read(String delimiter);
+    List<Map<String, Object>> read(String delimiter, String path);
 }

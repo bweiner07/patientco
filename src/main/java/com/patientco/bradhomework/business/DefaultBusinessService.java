@@ -8,36 +8,34 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.*;
 
+import static java.util.Objects.nonNull;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class DefaultBusinessService implements BusinessService {
 
-    //Todo, handle if entry is missing...need to insert a blank or something
-    //Todo: proper exception handling
-    //Todo: tests..shame no TDD
     private final Splitinator splitinator;
 
     @Override
-    public List<Map<String, Object>> read(String delimiter) {
+    public List<Map<String, Object>> read(String delimiter, String path) {
         List<Map<String, Object>> values = new ArrayList<>();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/input.txt"));
+            String checkedDelimiter = Optional.ofNullable(delimiter).orElse(",");
+            BufferedReader reader = new BufferedReader(new FileReader(Optional.ofNullable(path).orElse("src/main/resources/input.txt")));
             String headers = reader.readLine();
-            List<String> titles = Arrays.asList(headers.split(delimiter));
 
-            if(!titles.isEmpty()){
+            if(nonNull(headers)){
+                List<String> titles = Arrays.asList(headers.split(checkedDelimiter));
                 String line;
                 while((line = reader.readLine()) != null){
 
-                    List<String> entries = splitinator.split(line, delimiter.charAt(0));
+                    List<String> entries = splitinator.split(line, checkedDelimiter.charAt(0));
                     values.add(mapEntriesToTitles(titles, entries));
                 }
             }
-
-
         }catch (Exception e){
-          log.warn("doom");
+          throw new FailedToParseFileException(e.getMessage());
         }
 
         return values;

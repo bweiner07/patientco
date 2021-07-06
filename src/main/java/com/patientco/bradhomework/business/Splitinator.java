@@ -11,7 +11,7 @@ import static java.util.Objects.isNull;
 public class Splitinator {
 
     public List<String> split(String unSplit, char delimiter) {
-        if (isNull(unSplit) || unSplit.isBlank()) {
+        if (isNull(unSplit) || unSplit.isBlank() || delimiter == '\0') {
             return List.of();
         }
 
